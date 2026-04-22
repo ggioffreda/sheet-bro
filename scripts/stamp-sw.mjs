@@ -65,14 +65,16 @@ async function main() {
   const files = await walk(DIST)
   const relFiles = files.map((f) => relative(DIST, f).replaceAll('\\', '/'))
 
+  // Manifest entries are kept as base-relative paths (no leading slash).
+  // sw.js prepends the deployment base (derived from the registration
+  // scope) at runtime so the same build works at '/' or '/sheet-bro/'.
   const manifest = relFiles
     .filter((p) => matches(PRECACHE_GLOBS, p))
     .filter((p) => !matches(SKIP, p))
-    .map((p) => '/' + p)
     .sort()
 
-  if (!manifest.includes('/index.html')) {
-    throw new Error('precache manifest missing /index.html — build output looks incomplete')
+  if (!manifest.includes('index.html')) {
+    throw new Error('precache manifest missing index.html — build output looks incomplete')
   }
 
   const hasher = createHash('sha256')

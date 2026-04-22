@@ -83,6 +83,12 @@ What this does and doesn't protect against:
 `pnpm build` emits a `dist/` directory. Copy it to any static host and point
 the webroot at it. Nothing else from the repo needs to be on the server.
 
+For subpath deployments (e.g. GitHub Pages at `https://user.github.io/sheet-bro/`),
+set `BASE_URL=/sheet-bro/` in the build environment — the shipped workflow at
+`.github/workflows/static.yml` wires this up automatically from
+`actions/configure-pages`. The service worker derives its base from its
+registration scope at runtime, so the same `dist/` works under any base.
+
 Server requirements:
 
 1. **HTTPS is mandatory.** `crypto.subtle` is disabled on plain HTTP

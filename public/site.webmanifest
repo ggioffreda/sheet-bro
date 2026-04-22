@@ -2,18 +2,18 @@
   "name": "sheet-bro",
   "short_name": "sheet-bro",
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
   ],
   "theme_color": "#000000",
   "background_color": "#000000",
   "display": "standalone",
-  "start_url": "/",
-  "scope": "/",
-  "id": "/",
+  "start_url": "./",
+  "scope": "./",
+  "id": "./",
   "file_handlers": [
     {
-      "action": "/",
+      "action": "./",
       "accept": {
         "text/csv": [".csv"],
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],

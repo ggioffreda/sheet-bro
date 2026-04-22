@@ -10,7 +10,7 @@
  * Behaviour:
  *   - Precache: index.html + every file in ASSET_MANIFEST that isn't
  *     explicitly runtime-only (currently: sql-wasm WASM).
- *   - Navigations: network-first, fall back to cached /index.html when
+ *   - Navigations: network-first, fall back to the cached index.html when
  *     offline. Synthesise a new Response with defence-in-depth security
  *     headers added. (Authoritative headers must still come from the
  *     server; these are a safety net for hosts that cannot set them.)
@@ -30,9 +30,16 @@ const ASSET_MANIFEST = __ASSET_MANIFEST__
 const PRECACHE = `sheet-bro-precache-${CACHE_VERSION}`
 const RUNTIME = `sheet-bro-runtime-${CACHE_VERSION}`
 
-const WASM_PATTERN = /\/assets\/sql-wasm[^/]*\.wasm$/
+// Matches both the URL pathname form ('/sheet-bro/assets/sql-wasm.wasm') at
+// runtime and the bare manifest-entry form ('assets/sql-wasm.wasm') at install.
+const WASM_PATTERN = /(^|\/)assets\/sql-wasm[^/]*\.wasm$/
 
 const ORIGIN = self.location.origin
+// Derived from the registration scope so the same SW works under any
+// deployment base (root '/', or a subpath like '/sheet-bro/' on GitHub
+// Pages). ASSET_MANIFEST entries are stamped as base-relative paths.
+const BASE = new URL(self.registration.scope).pathname
+const INDEX_PATH = `${BASE}index.html`
 
 const EXTRA_NAV_HEADERS = {
   'X-Content-Type-Options': 'nosniff',
@@ -46,7 +53,8 @@ const EXTRA_NAV_HEADERS = {
 function isPrecacheable(url) {
   if (url.origin !== ORIGIN) return false
   if (WASM_PATTERN.test(url.pathname)) return false
-  return ASSET_MANIFEST.includes(url.pathname)
+  if (!url.pathname.startsWith(BASE)) return false
+  return ASSET_MANIFEST.includes(url.pathname.slice(BASE.length))
 }
 
 function isRuntimeCacheable(url) {
@@ -125,14 +133,14 @@ self.addEventListener('fetch', (event) => {
           const ct = net.headers.get('content-type') || ''
           if (ct.startsWith('text/html')) {
             const cache = await caches.open(PRECACHE)
-            cache.put('/index.html', net.clone()).catch(() => {})
+            cache.put(INDEX_PATH, net.clone()).catch(() => {})
           }
           return withExtraHeaders(net)
         }
         return net
       } catch {
         const cache = await caches.open(PRECACHE)
-        const cached = await cache.match('/index.html')
+        const cached = await cache.match(INDEX_PATH)
         if (cached) return withExtraHeaders(cached)
         return new Response('offline', { status: 503, statusText: 'offline' })
       }

@@ -2,7 +2,8 @@ import { notify } from './app'
 
 const UPDATE_INTERVAL_MS = 6 * 60 * 60 * 1000
 const SCRIPT_URL_KEY = 'sheet-bro.sw.scriptURL'
-const EXPECTED_PATH = '/sw.js'
+const BASE = import.meta.env.BASE_URL
+const EXPECTED_PATH = `${BASE}sw.js`
 
 export function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return
@@ -14,7 +15,7 @@ export function registerServiceWorker() {
 
 async function bootstrap() {
   try {
-    const registration = await navigator.serviceWorker.register(EXPECTED_PATH, { scope: '/' })
+    const registration = await navigator.serviceWorker.register(EXPECTED_PATH, { scope: BASE })
 
     verifyScriptURL(registration)
 
