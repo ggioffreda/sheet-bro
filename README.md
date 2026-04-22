@@ -5,6 +5,8 @@ backend and zero framework.
 Drop a file onto the page, edit it in a full-screen workbook, export back out.
 All data stays on the device, encrypted at rest, scoped to the browser tab.
 
+Use [sheet-bro on GitHub pages](https://ggioffreda.github.io/sheet-bro/).
+
 ## Acknowledgements
 
 Built on top of [Univer](https://univer.ai/),
