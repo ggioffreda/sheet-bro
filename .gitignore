@@ -1,0 +1,13 @@
+node_modules
+dist
+*.tsbuildinfo
+.DS_Store
+coverage
+test-results
+playwright-report
+
+# Regenerated at the start of every e2e run from e2e/fixtures/sample.csv.
+e2e/fixtures/sample.xlsx
+e2e/fixtures/sample.sqlite
+e2e/fixtures/sample.sql
+e2e/fixtures/features.xlsx
